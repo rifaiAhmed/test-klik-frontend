@@ -57,12 +57,14 @@ export interface MemberItem {
   email: string;
   no_rekening: string;
   manager_id: number;
+  paket_id: number;
   manager: Manager;
   Registartion_id: number;
   registration: Registration;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  upline_member_id: string;
 }
 
 export interface MembersResponse {

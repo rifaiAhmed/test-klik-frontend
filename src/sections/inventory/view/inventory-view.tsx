@@ -30,7 +30,12 @@ import { MemberModal } from '../member-modal';
 
 export function MemberView() {
   const [members, setMembers] = useState<MemberItem[]>([]);
-  const [meta, setMeta] = useState({ totalData: 0, totalPages: 0, current_page: 1 });
+  const [meta, setMeta] = useState({
+    totalData: 0,
+    totalPages: 0,
+    current_page: 1,
+  });
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,19 +54,20 @@ export function MemberView() {
 
   const loadMembers = useCallback(async () => {
     try {
-      const response = await fetchMembers(
-        page + 1,
-        rowsPerPage,
-        searchQuery,
-        sortOrder,
-        sortField
-      );
-      setMembers(response.data);
-      // setMeta({
-      //   totalData: response.meta.totalData,
-      //   totalPages: response.meta.totalPages,
-      //   current_page: response.meta.current_page,
-      // });
+      const response = await fetchMembers({
+        limit: rowsPerPage,
+        skip: page * rowsPerPage,
+        search: searchQuery,
+        sort_by: sortField,
+        sort_type: sortOrder,
+      });
+
+      setMembers(response.data || []);
+      setMeta({
+        totalData: response.meta?.totalData || 0,
+        totalPages: response.meta?.totalPages || 0,
+        current_page: response.meta?.current_page || 1,
+      });
     } catch (error) {
       console.error('Failed to load members:', error);
     }
@@ -108,7 +114,6 @@ export function MemberView() {
     if (deleteId !== null) {
       try {
         await deleteMember(deleteId);
-        setMembers(members.filter((m) => m.id !== deleteId));
         loadMembers();
         handleSnackbar('Member berhasil dihapus!', 'success');
       } catch (error) {
@@ -167,7 +172,7 @@ export function MemberView() {
                     { key: 'email', label: 'Email' },
                     { key: 'no_hp', label: 'No HP' },
                     { key: 'manager', label: 'Manager' },
-                    { key: 'paket', label: 'Paket' },
+                    { key: 'no_ktp', label: 'No KTP' },
                   ].map((col) => (
                     <TableCell key={col.key}>
                       <TableSortLabel
@@ -204,7 +209,10 @@ export function MemberView() {
           rowsPerPage={rowsPerPage}
           onPageChange={(event, newPage) => setPage(newPage)}
           rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={(event) => setRowsPerPage(parseInt(event.target.value, 10))}
+          onRowsPerPageChange={(event) => {
+            setRowsPerPage(parseInt(event.target.value, 10));
+            setPage(0);
+          }}
         />
       </Card>
 

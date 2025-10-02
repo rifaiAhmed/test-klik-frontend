@@ -14,11 +14,11 @@ export function MemberTableRow({ row, onEdit, onDelete }: MemberTableRowProps) {
       <TableCell>{row.email}</TableCell>
       <TableCell>{row.no_hp}</TableCell>
       <TableCell>{row.manager.nama}</TableCell>
-      <TableCell>{row.tempat_lahir}</TableCell>
+      <TableCell>{row.no_ktp}</TableCell>
       <TableCell>
-        <Button variant="outlined" color="primary" onClick={() => onEdit(row)}>
+        {/* <Button variant="outlined" color="primary" onClick={() => onEdit(row)}>
           Edit
-        </Button>
+        </Button> */}
         <Button
           variant="outlined"
           color="error"
